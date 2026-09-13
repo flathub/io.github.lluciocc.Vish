@@ -19,5 +19,5 @@ modules:
     sources:
       - type: git
         url: https://github.com/Lluciocc/Vish.git
-        tag: v1.1.3
-        commit: 926dcb1e19f612daadf205ee38620222d86abf73
+        tag: v1.1.4
+        commit: a93f9cc355e335e80c6f96d7fb8d4d3ad717f797
