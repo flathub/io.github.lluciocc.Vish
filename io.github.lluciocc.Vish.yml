@@ -1,9 +1,9 @@
 app-id: io.github.lluciocc.Vish
 runtime: org.kde.Platform
-runtime-version: "6.10"
+runtime-version: "6.11"
 sdk: org.kde.Sdk
 base: io.qt.PySide.BaseApp
-base-version: "6.10"
+base-version: "6.11"
 command: vish
 
 finish-args:
@@ -19,5 +19,5 @@ modules:
     sources:
       - type: git
         url: https://github.com/Lluciocc/Vish.git
-        tag: v1.1.4
-        commit: a93f9cc355e335e80c6f96d7fb8d4d3ad717f797
+        tag: v1.1.5
+        commit: 7d60194b50408d3c4e71e534ae210ea05358eaed
