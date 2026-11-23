@@ -2,9 +2,7 @@ app-id: io.github.lluciocc.Vish
 runtime: org.kde.Platform
 runtime-version: "6.11"
 sdk: org.kde.Sdk
-base: io.qt.PySide.BaseApp
-base-version: "6.11"
-command: vish
+command: vish-with-bundled-qt
 
 finish-args:
   - --share=network
@@ -14,10 +12,58 @@ finish-args:
   - --device=dri
 
 modules:
+  - name: pyside6
+    buildsystem: simple
+    build-commands:
+      - python3 -m pip install --prefix="${FLATPAK_DEST}" --no-index --no-deps ./*.whl
+      - install -Dm755 vish-with-bundled-qt "${FLATPAK_DEST}/bin/vish-with-bundled-qt"
+    sources:
+      - type: file
+        only-arches: [x86_64]
+        url: https://files.pythonhosted.org/packages/7c/4a/696e3a9ed26436b1b41ca22dd21e7bce214ba1a1e1dea5c84b5627444c65/shiboken6-6.11.3-cp310-abi3-manylinux_2_34_x86_64.whl
+        sha256: e601c957011345c741b88f661a12486f478db881d6777bdf37e3dc7a8d3387c6
+
+      - type: file
+        only-arches: [aarch64]
+        url: https://files.pythonhosted.org/packages/fc/e2/ce5f54d6bc8950fed935e61c1ade6537869fe6913517eef0d5f91140f5cc/shiboken6-6.11.3-cp310-abi3-manylinux_2_39_aarch64.whl
+        sha256: 01d172ec9599fed315aec025b1424ff945ae5358f87588a848797616a18de6e7
+
+      - type: file
+        only-arches: [x86_64]
+        url: https://files.pythonhosted.org/packages/91/23/9692f9b9a7cf89c0e8b99da228a728064aa827dc115b5dc974156bcf14fc/pyside6_essentials-6.11.3-cp310-abi3-manylinux_2_34_x86_64.whl
+        sha256: c6a5c3b58bf55aef6e09a7de690ff6133335014ab81a7f22f56363ea08e8f6a3
+
+      - type: file
+        only-arches: [aarch64]
+        url: https://files.pythonhosted.org/packages/db/5b/51501ef59ad1ee97d9efa945e23a4f09b0e164ab8d869ea142b7bb7bc736/pyside6_essentials-6.11.3-cp310-abi3-manylinux_2_39_aarch64.whl
+        sha256: b7d77901d5fb413e96788cb15c56177cbbad0ff12605c716abdc79eabe4ba859
+
+      - type: file
+        only-arches: [x86_64]
+        url: https://files.pythonhosted.org/packages/00/f1/d1313576cb6ee71d02d4d5762401f70310319ffe3b2a650b8d3101e4b07f/pyside6_addons-6.11.3-cp310-abi3-manylinux_2_34_x86_64.whl
+        sha256: 5cab663fbff1b7a1fa7e641754de3ca1ea410407fc70bd4e240144b42d09a69c
+
+      - type: file
+        only-arches: [aarch64]
+        url: https://files.pythonhosted.org/packages/42/78/1432b9c3bf72eb28d4f78a995c5aeecae8fc5ba848af29b5c8d99e91ef34/pyside6_addons-6.11.3-cp310-abi3-manylinux_2_39_aarch64.whl
+        sha256: 6d536493003c5f409ba1bf52d8053e23f9c97f291e2a347a676902bfe0a1a31e
+
+      - type: script
+        dest-filename: vish-with-bundled-qt
+        commands:
+          - |
+            set -eu
+            pyside_dir=$(python3 -c '
+            import sysconfig
+            print(sysconfig.get_path("platlib", vars={"base": "/app", "platbase": "/app"}) + "/PySide6")
+            ')
+            export LD_LIBRARY_PATH="$pyside_dir/Qt/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+            export QT_PLUGIN_PATH="$pyside_dir/Qt/plugins"
+            exec /app/bin/vish "$@"
+
   - name: vish
     buildsystem: meson
     sources:
       - type: git
         url: https://github.com/Lluciocc/Vish.git
-        tag: v1.1.5
-        commit: 7d60194b50408d3c4e71e534ae210ea05358eaed
+        commit: d74901d58d17e4467032e97937b4dd05d377babd
